@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sutt_app/details.dart';
+import 'package:sutt_app/main.dart';
 
-class MyCard extends StatelessWidget {
+class MyCard extends StatefulWidget {
   final int ordernumber;
-  final String status;
+  String status;
   final int quantity;
   final int progresspercent;
   final int price;
   final String image;
 
-  const MyCard({
+  MyCard({
     super.key,
     required this.ordernumber,
     required this.status,
@@ -18,6 +19,12 @@ class MyCard extends StatelessWidget {
     required this.image,
     required this.progresspercent,
   });
+
+  @override
+  State<MyCard> createState() => _MyCardState();
+}
+
+class _MyCardState extends State<MyCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,65 +32,99 @@ class MyCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => details(
-                  image: image,
-                  progress: progresspercent,
-                ),
-              ));
+          if (widget.status == "Accepted") {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => details(
+                    image: widget.image,
+                    progress: widget.progresspercent,
+                    ordernumber: widget.ordernumber,
+                  ),
+                ));
+          }
         },
         child: Container(
           child: Row(
             children: [
-              Column(children: [
-                Text(
-                  "Order #$ordernumber",
-                  style: TextStyle(
-                      color: Color(0xFF808080),
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.schedule,
-                      color: Color(0xFF808080),
-                    ),
-                    Text("$status", style: TextStyle(color: Color(0xFFFFFFFF))),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.shopping_cart,
-                      color: Color(0xFF808080),
-                    ),
-                    Text(
-                      "x $quantity",
-                      style: TextStyle(color: Color(0xFFFFFFFF)),
-                    )
-                  ],
-                ),
-                Spacer()
-              ]),
-              Spacer(),
+              Column(
+                children: [
+                  Text(
+                    "Order #${widget.ordernumber}",
+                    style: TextStyle(
+                        color: Color(0xFF808080),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Padding(padding: EdgeInsets.all(10)),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        color: Color(0xFF808080),
+                      ),
+                      Text("${widget.status}",
+                          style: TextStyle(
+                              color: Color((widget.status == "Accepted"
+                                  ? 0xFFB8BB26
+                                  : 0xFFFB4934)))),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.shopping_cart,
+                        color: Color(0xFF808080),
+                      ),
+                      Text(
+                        "x ${widget.quantity}",
+                        style: TextStyle(color: Color(0xFFFFFFFF)),
+                      )
+                    ],
+                  ),
+                ],
+              ),
               Container(
                 height: 300,
                 width: 200,
                 child: Column(
                   children: [
                     Image.asset(
-                      image,
+                      widget.image,
                       fit: BoxFit.fill,
                     ),
-                    Text("Hello!")
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            widget.status = "Accepted";
+                            setState(() {});
+                          },
+                          child: Text(
+                            "YES",
+                            style: TextStyle(color: Color(0xFFB8BB26)),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            widget.status = "Rejected";
+                            setState(() {});
+                          },
+                          child: Text(
+                            "NO",
+                            style: TextStyle(color: Color(0xFFFB4934)),
+                          ),
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    )
                   ],
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                 ),
               ),
             ],
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
           ),
           height: 300,
           decoration: BoxDecoration(
